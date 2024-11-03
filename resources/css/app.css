@@ -1,0 +1,34 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}
+
+
+/* drag and drop styles */
+.drag-handle {
+    cursor: grab;
+    padding: 0 8px;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+/* Sortable.js specific classes */
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: #c8ebfb;
+}
+
+.sortable-chosen {
+    background-color: #e9ecef;
+}
+
+.sortable-drag {
+    opacity: 0.9;
+}
+/* end drag and drop styles */
