@@ -73,9 +73,12 @@ export function initializeProjectModals() {
         function setDeleteLoading(isLoading) {
             deleteButton.disabled = isLoading;
             closeButtons.forEach(button => button.disabled = isLoading);
+
+            // Prevent/allow modal from closing by clicking outside
             modal._config.backdrop = isLoading ? 'static' : true;
             modal._config.keyboard = !isLoading;
 
+            // Add/remove loading spinner
             if (isLoading) {
                 deleteButton.innerHTML = `
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
