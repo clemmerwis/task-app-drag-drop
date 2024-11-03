@@ -16,7 +16,7 @@
 
                         <div class="btn-group">
                             <button class="btn btn-outline-secondary btn-sm edit-task-btn">Edit</button>
-                            <button class="btn btn-outline-danger btn-sm">Delete</button>
+                            <button class="btn btn-outline-danger btn-sm delete-task-btn">Delete</button>
                         </div>
                     </div>
                 @endforeach
@@ -26,3 +26,4 @@
 </div>
 
 <x-tasks.task-edit-modal />
+<x-tasks.task-delete-modal />

@@ -113,11 +113,26 @@ class TaskController extends Controller
 
     public function destroy(Project $project, Task $task)
     {
-        $task->delete();
+        try {
+            $task->delete();
 
-        return redirect()
-            ->route('projects.tasks.index', $project)
-            ->with('success', 'Task deleted successfully');
+            return response()->json([
+                'success' => true,
+                'message' => 'Task deleted successfully'
+            ]);
+        }
+        catch (\Exception $e) {
+            Log::error('Failed to delete task', [
+                'project_id' => $project->id,
+                'task_id' => $task->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to delete task. Please try again.'
+            ], 500);
+        }
     }
 
     /**

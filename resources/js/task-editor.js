@@ -56,6 +56,7 @@ export function initializeTaskEditing() {
         }
     }
 
+    // Add click handlers to all edit buttons
     document.querySelectorAll('.edit-task-btn').forEach(button => {
         button.addEventListener('click', (e) => {
             const taskItem = e.target.closest('.list-group-item');

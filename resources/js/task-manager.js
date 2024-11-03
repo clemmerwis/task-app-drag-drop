@@ -1,5 +1,6 @@
 import Sortable from 'sortablejs';
 import { initializeTaskEditing } from './task-editor';
+import { initializeTaskDeletion } from './task-deleter';
 
 
 export function initializeTaskManagement() {
@@ -48,5 +49,6 @@ export function initializeTaskManagement() {
         });
 
         initializeTaskEditing();
+        initializeTaskDeletion();
     }
 }
