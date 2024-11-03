@@ -76,7 +76,9 @@ export function initializeTaskEditing() {
         }
 
         const taskId = activeTaskElement.dataset.taskId;
-        const projectId = document.getElementById('taskList').dataset.projectId;
+        // const projectId = document.getElementById('taskList').dataset.projectId; erase me
+        const projectSlug = document.getElementById('taskList').dataset.projectSlug; // Changed from projectId
+
         const newName = editInput.value.trim();
 
         isSaving = true;
@@ -85,7 +87,7 @@ export function initializeTaskEditing() {
         // Enable loading state
         setLoading(true);
 
-        axios.patch(`/projects/${projectId}/tasks/${taskId}`, {
+        axios.patch(`/projects/${projectSlug}/tasks/${taskId}`, {
             name: newName
         })
         .then(response => {

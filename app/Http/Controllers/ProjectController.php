@@ -55,10 +55,6 @@ class ProjectController extends Controller
 
             return back()->withInput()->with('error', 'Unable to create project. Please try again.');
         }
-
-        return redirect()
-            ->route('projects.tasks.index', $project)
-            ->with('success', 'Project created successfully!');
     }
 
     public function destroy(Project $project)

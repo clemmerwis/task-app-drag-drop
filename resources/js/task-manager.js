@@ -23,11 +23,12 @@ export function initializeTaskManagement() {
 
             // Called when sorting is stopped/completed
             onEnd: function(evt) {
-                const projectId = taskList.dataset.projectId;
+                // const projectId = taskList.dataset.projectId; erase me
+                const projectSlug = taskList.dataset.projectSlug; // Changed from projectId
                 const taskId = evt.item.dataset.taskId;
                 const newPriority = evt.newIndex + 1; // Convert to 1-based index
 
-                axios.patch(`/projects/${projectId}/tasks/${taskId}/priority`, {
+                axios.patch(`/projects/${projectSlug}/tasks/${taskId}/priority`, {
                     priority: newPriority
                 })
                 .catch(error => {

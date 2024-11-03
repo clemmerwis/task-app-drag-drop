@@ -26,11 +26,12 @@ class Task extends Model
     }
 
     /**
-     * The "booted" method is a Laravel lifecycle hook
+     * The "booted" method is a Laravel v8+ lifecycle hook that runs
+     * after the model and all its traits have booted (better than boot())
      */
     protected static function booted()
     {
-        // This is a Laravel model event
+        // Creating is a Laravel model event
         static::creating(function ($task) {
             if (!$task->priority) {
                 // Get highest priority in the same project and add 1, or start at 1 if no tasks exist
@@ -59,7 +60,7 @@ class Task extends Model
                     ->where('priority', '>=', $newPriority)
                     ->where('priority', '<', $this->priority)
                     ->increment('priority');
-            } 
+            }
             else if ($newPriority > $this->priority) {
                 self::query()
                     ->where('project_id', $this->project_id)

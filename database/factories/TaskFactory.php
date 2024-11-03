@@ -16,8 +16,8 @@ class TaskFactory extends Factory
      */
     public function definition(): array
     {
-        return [      
-            'name' => fake()->sentence(4),
+        return [
+            'name' => fake()->unique()->sentence(4),
             // task model sets priority automatically on creation
         ];
     }

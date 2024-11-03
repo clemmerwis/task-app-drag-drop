@@ -7,7 +7,7 @@
         class="form-select"
         onchange="this.form.submit()">
         @foreach($projects as $projectOption)
-            <option value="{{ $projectOption->id }}"
+            <option value="{{ $projectOption->slug }}"
                     {{ $project->id == $projectOption->id ? 'selected' : '' }}>
                 {{ $projectOption->name }}
             </option>

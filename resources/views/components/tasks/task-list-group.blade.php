@@ -1,6 +1,9 @@
 <div class="row">
     <div class="col">
-        <div id="taskList" data-project-id="{{ $project->id }}" class="list-group">
+        <div id="taskList"
+            data-project-id="{{ $project->id }}"
+            data-project-slug="{{ $project->slug }}"
+            class="list-group">
             @if($tasks->isEmpty())
                 <div class="alert alert-info">
                     No tasks yet. Add your first task above!

@@ -15,11 +15,12 @@ class TaskController extends Controller
     public function index(Project $project, Request $request)
     {
         if ($request->has('switch_to')) {
+            $switchToProject = Project::where('slug', $request->switch_to)->firstOrFail();
             return redirect()->route('projects.tasks.index', $request->switch_to);
         }
 
-        // get all tasks for dropdown
-        $projects = Project::select('id', 'name')->get();
+        // get all projects for dropdown (including slug)
+        $projects = Project::select('id', 'name', 'slug')->get();
 
         // get only the tasks for currently selected project
         $tasks = $project->tasks()

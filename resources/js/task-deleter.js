@@ -72,13 +72,14 @@ export function initializeTaskDeletion() {
         if (!activeTaskElement) return;
 
         const taskId = activeTaskElement.dataset.taskId;
-        const projectId = document.getElementById('taskList').dataset.projectId;
+        // const projectId = document.getElementById('taskList').dataset.projectId; erase me
+        const projectSlug = document.getElementById('taskList').dataset.projectSlug; // Changed from projectId
         const taskElement = activeTaskElement;
 
         isDeleting = true;
         setLoading(true);
 
-        axios.delete(`/projects/${projectId}/tasks/${taskId}`)
+        axios.delete(`/projects/${projectSlug}/tasks/${taskId}`)
             .then(response => {
                 modal.hide();
                 taskElement.remove();

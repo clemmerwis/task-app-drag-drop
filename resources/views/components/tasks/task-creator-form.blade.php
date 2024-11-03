@@ -1,6 +1,6 @@
 <div class="row mb-4">
     <div class="col">
-        <form action="{{ route('projects.tasks.store', $project) }}" method="POST">
+        <form action="{{ route('projects.tasks.store', $project->slug) }}" method="POST">
             @csrf
             <div class="input-group">
                 <input type="text"
