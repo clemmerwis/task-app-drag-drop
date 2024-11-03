@@ -74,37 +74,46 @@ class TaskController extends Controller
 
     public function update(Request $request, Project $project, Task $task)
     {
-        $validated = $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'min:1',
-                'max:255',
-                'not_regex:/^[\s]*$/', // Prevent only-whitespace names
-                'unique:tasks,name,' . $task->id . ',id,project_id,' . $project->id, // Unique within project, excluding current task
-            ],
-            [
-                'name.required' => 'Please enter a task name.',
-                'name.max' => 'Task name cannot be longer than 255 characters.',
-                'name.min' => 'Task name cannot be empty.',
-                'name.not_regex' => 'Task name cannot contain only whitespace.',
-            ]
-        ]);
-
         try {
+            $validated = $request->validate(
+                [
+                    'name' => [
+                        'required',
+                        'string',
+                        'min:1',
+                        'max:255',
+                        'not_regex:/^[\s]*$/',
+                        'unique:tasks,name,' . $task->id . ',id,project_id,' . $project->id, // Fixed unique rule
+                    ],
+                ],
+                [
+                    'name.required' => 'Please enter a task name.',
+                    'name.max' => 'Task name cannot be longer than 255 characters.',
+                    'name.min' => 'Task name cannot be empty.',
+                    'name.not_regex' => 'Task name cannot contain only whitespace.',
+                    'name.unique' => 'A task with this name already exists in this project.',
+                ]
+            );
+
             $task->update($validated);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Task updated successfully'
             ]);
-
+        }
+        catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->validator->errors()->first(),
+                'errors' => $e->validator->errors()
+            ], 422); // Use 422 status code for validation errors
         }
         catch (\Exception $e) {
             Log::error('Failed to update task', [
                 'project_id' => $project->id,
                 'task_id' => $task->id,
-                'name' => $validated['name'],
+                'name' => $request->name,
                 'error' => $e->getMessage()
             ]);
 
