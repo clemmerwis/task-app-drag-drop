@@ -44,7 +44,7 @@ export function initializeTaskDeletion() {
         modal._config.backdrop = isLoading ? 'static' : true;
         modal._config.keyboard = !isLoading;
 
-        // Update button text and show spinner
+        // Add/remove loading spinner
         if (isLoading) {
             confirmButton.innerHTML = `
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>

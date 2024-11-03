@@ -45,7 +45,7 @@ export function initializeTaskEditing() {
         modal._config.backdrop = isLoading ? 'static' : true;
         modal._config.keyboard = !isLoading;
 
-        // Update button text and show spinner
+        // Add/remove loading spinner
         if (isLoading) {
             saveButton.innerHTML = `
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -68,6 +68,7 @@ export function initializeTaskEditing() {
         });
     });
 
+    // Handle save
     saveButton.addEventListener('click', () => {
         if (!activeTaskElement || !editInput.value.trim()) {
             editInput.classList.add('is-invalid');
