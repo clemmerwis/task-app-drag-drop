@@ -22,12 +22,8 @@
                                    class="form-control @error('name') is-invalid @enderror"
                                    id="projectName"
                                    name="name"
+                                   value="{{ old('project_name') }}"
                                    required>
-                            @error('name')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                            @enderror
                         </div>
                     </div>
                     <div class="modal-footer">

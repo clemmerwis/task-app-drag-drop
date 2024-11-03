@@ -32,22 +32,25 @@ class TaskController extends Controller
 
     public function store(Request $request, Project $project)
     {
-        $validated = $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'min:1',
-                'max:255',
-                'not_regex:/^[\s]*$/', // Prevent only-whitespace names
-                'unique:tasks,name,NULL,id,project_id,' . $project->id, // Ensure unique name within project
+        $validated = $request->validate(
+            [   // First argument: rules array
+                'name' => [
+                    'required',
+                    'string',
+                    'min:1',
+                    'max:255',
+                    'not_regex:/^[\s]*$/', // Prevent only-whitespace names
+                    'unique:tasks,name,NULL,id,project_id,' . $project->id, // Ensure unique name within project
+                ],
             ],
-            [
+            [   // Second argument: messages array
                 'name.required' => 'Please enter a task name.',
                 'name.max' => 'Task name cannot be longer than 255 characters.',
                 'name.min' => 'Task name cannot be empty.',
                 'name.not_regex' => 'Task name cannot contain only whitespace.',
+                'name.unique' => 'A task with this name already exists in this project.', // Added unique message
             ]
-        ]);
+        );
 
         try {
             $project->tasks()->create($validated);

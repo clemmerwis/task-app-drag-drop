@@ -55,9 +55,12 @@ export function initializeProjectModals() {
 
         // Reset form when modal is hidden
         newProjectModal.addEventListener('hidden.bs.modal', () => {
-            setCreateLoading(false);
-            projectNameInput.classList.remove('is-invalid');
-            newProjectForm.reset();
+            // Only reset the form if there's no error message
+            if (!document.querySelector('.alert.alert-danger')) {
+                setCreateLoading(false);
+                projectNameInput.classList.remove('is-invalid');
+                newProjectForm.reset();
+            }
         });
     }
 

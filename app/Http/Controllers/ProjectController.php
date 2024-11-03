@@ -22,38 +22,44 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'min:1',
-                'max:100',
-                'not_regex:/^[\s]*$/', // Prevent only-whitespace names
-                'unique:projects',
-            ],
-            [
-                'name.required' => 'Please enter a project name.',
-                'name.max' => 'Project name cannot be longer than 100 characters.',
-                'name.min' => 'Project name cannot be empty.',
-                'name.not_regex' => 'Project name cannot contain only whitespace.',
-                'name.unique' => 'A project with this name already exists.',
-            ]
-        ]);
-
         try {
-            $project = Project::create($validated);
+            $request->validate(
+                [   // First argument: rules array
+                    'name' => [
+                        'required',
+                        'string',
+                        'min:1',
+                        'max:100',
+                        'not_regex:/^[\s]*$/',
+                        'unique:projects,name',
+                    ],
+                ],
+                [   // Second argument: messages array
+                    'name.required' => 'The project name is required.',
+                    'name.max' => 'The project name cannot be longer than 100 characters.',
+                    'name.min' => 'The project name cannot be empty.',
+                    'name.not_regex' => 'The project name cannot contain only whitespace.',
+                    'name.unique' => 'The project name has already been taken.',
+                ]
+            );
+
+            $project = Project::create($request->only('name'));
+
             return redirect()
                 ->route('projects.tasks.index', $project)
                 ->with('success', 'Project created successfully!');
-
+        }
+        catch (\Illuminate\Validation\ValidationException $e) {
+            // Don't use withInput() at all - the modal JS will handle repopulating
+            return back()->with('error', $e->validator->errors()->first());
         }
         catch (\Exception $e) {
             Log::error('Failed to create project', [
-                'name' => $validated['name'],
+                'name' => $request->name,
                 'error' => $e->getMessage()
             ]);
 
-            return back()->withInput()->with('error', 'Unable to create project. Please try again.');
+            return back()->with('error', 'Unable to create project. Please try again.');
         }
     }
 
