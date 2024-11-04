@@ -24,17 +24,21 @@ class ProjectController extends Controller
     {
         try {
             $request->validate(
-                [   // First argument: rules array
+                [
                     'name' => [
                         'required',
                         'string',
                         'min:1',
                         'max:100',
                         'not_regex:/^[\s]*$/',
+                        // Ensure project name is unique
+                        // Parameters:
+                        // - projects: table name
+                        // - name: column to check uniqueness
                         'unique:projects,name',
                     ],
                 ],
-                [   // Second argument: messages array
+                [
                     'name.required' => 'The project name is required.',
                     'name.max' => 'The project name cannot be longer than 100 characters.',
                     'name.min' => 'The project name cannot be empty.',

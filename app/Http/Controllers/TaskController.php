@@ -33,22 +33,30 @@ class TaskController extends Controller
     public function store(Request $request, Project $project)
     {
         $validated = $request->validate(
-            [   // First argument: rules array
+            [
                 'name' => [
                     'required',
                     'string',
                     'min:1',
                     'max:255',
                     'not_regex:/^[\s]*$/', // Prevent only-whitespace names
+                    // Ensure task name is unique within the project
+                    // Parameters:
+                    // - tasks: table name
+                    // - name: column to check uniqueness
+                    // - NULL: no ID to ignore (creating new task)
+                    // - id: primary key column name
+                    // - project_id: additional column for scoping uniqueness
+                    // - $project->id: value for the project_id scope
                     'unique:tasks,name,NULL,id,project_id,' . $project->id, // Ensure unique name within project
                 ],
             ],
-            [   // Second argument: messages array
+            [
                 'name.required' => 'Please enter a task name.',
                 'name.max' => 'Task name cannot be longer than 255 characters.',
                 'name.min' => 'Task name cannot be empty.',
                 'name.not_regex' => 'Task name cannot contain only whitespace.',
-                'name.unique' => 'A task with this name already exists in this project.', // Added unique message
+                'name.unique' => 'A task with this name already exists in this project.',
             ]
         );
 
@@ -83,7 +91,15 @@ class TaskController extends Controller
                         'min:1',
                         'max:255',
                         'not_regex:/^[\s]*$/',
-                        'unique:tasks,name,' . $task->id . ',id,project_id,' . $project->id, // Fixed unique rule
+                        // Ensure task name is unique within the project (excluding the current task)
+                        // Parameters:
+                        // - tasks: table name
+                        // - name: column to check uniqueness
+                        // - $task->id: ignore this ID when checking uniqueness
+                        // - id: primary key column name
+                        // - project_id: additional column for scoping uniqueness
+                        // - $project->id: value for the project_id scope
+                        'unique:tasks,name,' . $task->id . ',id,project_id,' . $project->id,
                     ],
                 ],
                 [
@@ -149,16 +165,59 @@ class TaskController extends Controller
     }
 
     /**
-     * Update task priority order.
+     * Update task priority order within its project.
+     * Called when tasks are reordered via drag and drop.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function updatePriority(Request $request, Project $project, Task $task)
     {
-        $validated = $request->validate([
-            'priority' => 'required|integer|min:1',
-        ]);
+        // Ensure the task actually belongs to the project.
+        // GUI should ensure this anyway but this is extra security to prevent mistaken programtic attempts.
+        if ($task->project_id !== $project->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This task does not belong to the specified project.'
+            ], 403);
+        }
 
-        $task->updatePriority($validated['priority']);
+        try {
+            $validated = $request->validate(
+                [
+                    'priority' => 'required|integer|min:1',
+                ],
+                [
+                    'priority.required' => 'Priority is required.',
+                    'priority.integer' => 'Priority must be a number.',
+                    'priority.min' => 'Priority must be at least 1.',
+                ]
+            );
 
-        return response()->json(['success' => true]);
+            $task->updatePriority($validated['priority']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Task priority updated successfully'
+            ]);
+        }
+        catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->validator->errors()->first()
+            ], 422);
+        }
+        catch (\Exception $e) {
+            Log::error('Failed to update task priority', [
+                'project_id' => $project->id,
+                'task_id' => $task->id,
+                'priority' => $request->priority,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to update task priority. Please try again.'
+            ], 500);
+        }
     }
 }
