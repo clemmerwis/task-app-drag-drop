@@ -6,6 +6,10 @@ use App\Models\Task;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Http\Requests\Tasks\{
+    TaskStoreRequest,
+    TaskUpdateRequest
+};
 
 class TaskController extends Controller
 {
@@ -30,35 +34,9 @@ class TaskController extends Controller
         return view('tasks.index', compact('tasks', 'projects', 'project'));
     }
 
-    public function store(Request $request, Project $project)
+    public function store(TaskStoreRequest $request, Project $project)
     {
-        $validated = $request->validate(
-            [
-                'name' => [
-                    'required',
-                    'string',
-                    'min:1',
-                    'max:255',
-                    'not_regex:/^[\s]*$/', // Prevent only-whitespace names
-                    // Ensure task name is unique within the project
-                    // Parameters:
-                    // - tasks: table name
-                    // - name: column to check uniqueness
-                    // - NULL: no ID to ignore (creating new task)
-                    // - id: primary key column name
-                    // - project_id: additional column for scoping uniqueness
-                    // - $project->id: value for the project_id scope
-                    'unique:tasks,name,NULL,id,project_id,' . $project->id, // Ensure unique name within project
-                ],
-            ],
-            [
-                'name.required' => 'Please enter a task name.',
-                'name.max' => 'Task name cannot be longer than 255 characters.',
-                'name.min' => 'Task name cannot be empty.',
-                'name.not_regex' => 'Task name cannot contain only whitespace.',
-                'name.unique' => 'A task with this name already exists in this project.',
-            ]
-        );
+        $validated = $request->validated();
 
         try {
             $project->tasks()->create($validated);
@@ -80,38 +58,10 @@ class TaskController extends Controller
         }
     }
 
-    public function update(Request $request, Project $project, Task $task)
+    public function update(TaskUpdateRequest $request, Project $project, Task $task)
     {
         try {
-            $validated = $request->validate(
-                [
-                    'name' => [
-                        'required',
-                        'string',
-                        'min:1',
-                        'max:255',
-                        'not_regex:/^[\s]*$/',
-                        // Ensure task name is unique within the project (excluding the current task)
-                        // Parameters:
-                        // - tasks: table name
-                        // - name: column to check uniqueness
-                        // - $task->id: ignore this ID when checking uniqueness
-                        // - id: primary key column name
-                        // - project_id: additional column for scoping uniqueness
-                        // - $project->id: value for the project_id scope
-                        'unique:tasks,name,' . $task->id . ',id,project_id,' . $project->id,
-                    ],
-                ],
-                [
-                    'name.required' => 'Please enter a task name.',
-                    'name.max' => 'Task name cannot be longer than 255 characters.',
-                    'name.min' => 'Task name cannot be empty.',
-                    'name.not_regex' => 'Task name cannot contain only whitespace.',
-                    'name.unique' => 'A task with this name already exists in this project.',
-                ]
-            );
-
-            $task->update($validated);
+            $task->update($request->validated());
 
             return response()->json([
                 'success' => true,
@@ -123,13 +73,13 @@ class TaskController extends Controller
                 'success' => false,
                 'message' => $e->validator->errors()->first(),
                 'errors' => $e->validator->errors()
-            ], 422); // Use 422 status code for validation errors
+            ], 422);
         }
         catch (\Exception $e) {
             Log::error('Failed to update task', [
                 'project_id' => $project->id,
                 'task_id' => $task->id,
-                'name' => $request->name,
+                'name' => $request->validated()['name'],
                 'error' => $e->getMessage()
             ]);
 

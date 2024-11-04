@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Http\Requests\Projects\{
+    ProjectStoreRequest,
+    ProjectUpdateRequest
+};
 
 class ProjectController extends Controller
 {
@@ -20,34 +24,10 @@ class ProjectController extends Controller
         return view('projects.index');
     }
 
-    public function store(Request $request)
+    public function store(ProjectStoreRequest $request)
     {
         try {
-            $request->validate(
-                [
-                    'name' => [
-                        'required',
-                        'string',
-                        'min:1',
-                        'max:100',
-                        'not_regex:/^[\s]*$/',
-                        // Ensure project name is unique
-                        // Parameters:
-                        // - projects: table name
-                        // - name: column to check uniqueness
-                        'unique:projects,name',
-                    ],
-                ],
-                [
-                    'name.required' => 'The project name is required.',
-                    'name.max' => 'The project name cannot be longer than 100 characters.',
-                    'name.min' => 'The project name cannot be empty.',
-                    'name.not_regex' => 'The project name cannot contain only whitespace.',
-                    'name.unique' => 'The project name has already been taken.',
-                ]
-            );
-
-            $project = Project::create($request->only('name'));
+            $project = Project::create($request->validated());
 
             return redirect()
                 ->route('projects.tasks.index', $project)
@@ -67,35 +47,10 @@ class ProjectController extends Controller
         }
     }
 
-    public function update(Request $request, Project $project)
+    public function update(ProjectUpdateRequest $request, Project $project)
     {
         try {
-            $validated = $request->validate(
-                [
-                    'name' => [
-                        'required',
-                        'string',
-                        'min:1',
-                        'max:100',
-                        'not_regex:/^[\s]*$/',
-                        // Ensure project name is unique (excluding current project)
-                        // Parameters:
-                        // - projects: table name
-                        // - name: column to check uniqueness
-                        // - $project->id: ignore this ID when checking uniqueness
-                        'unique:projects,name,' . $project->id,
-                    ],
-                ],
-                [
-                    'name.required' => 'The project name is required.',
-                    'name.max' => 'The project name cannot be longer than 100 characters.',
-                    'name.min' => 'The project name cannot be empty.',
-                    'name.not_regex' => 'The project name cannot contain only whitespace.',
-                    'name.unique' => 'The project name has already been taken.',
-                ]
-            );
-
-            $project->update($validated);
+            $project->update($request->validated());
 
             return response()->json([
                 'success' => true,
