@@ -1,6 +1,6 @@
 <div>
     <button type="button"
-            class="btn btn-primary"
+            class="btn btn-primary me-3"
             data-bs-toggle="modal"
             data-bs-target="#newProjectModal">
         New Project
@@ -28,7 +28,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Create Project</button>
+                        <button type="submit" class="btn btn-success">Create Project</button>
                     </div>
                 </form>
             </div>

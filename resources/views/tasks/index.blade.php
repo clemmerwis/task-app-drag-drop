@@ -12,7 +12,10 @@
             <div>
                 <x-projects.project-selector-dropdown :projects="$projects" :project="$project" />
                 <div class="d-flex justify-content-between mt-2">
-                    <x-projects.project-creator-modal />
+                    <div class="btn-group">
+                        <x-projects.project-creator-modal />
+                        <x-projects.project-edit-modal :project="$project" />
+                    </div>
                     <x-projects.project-delete-modal :project="$project" />
                 </div>
             </div>

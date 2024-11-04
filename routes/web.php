@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 // projects routes
 Route::get('/', [ProjectController::class, 'index'])->name('projects.index');
 Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
+Route::patch('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
 Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
 
 // Nested resource routes for tasks within projects
