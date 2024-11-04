@@ -10,7 +10,7 @@
                 <div class="card-body">
                     <p class="card-text">To get started, create your first project:</p>
 
-                    <form action="{{ route('projects.store') }}" method="POST">
+                    <form action="{{ route('projects.store') }}" method="POST" id="initial-project-form">
                         @csrf
                         <div class="mb-3">
                             <label for="projectName" class="form-label">Project Name</label>

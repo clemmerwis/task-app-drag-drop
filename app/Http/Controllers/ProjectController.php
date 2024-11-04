@@ -48,14 +48,9 @@ class ProjectController extends Controller
         try {
             $project->update($request->validated());
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Project updated successfully',
-                'project' => [
-                    'name' => $project->name,
-                    'slug' => $project->slug
-                ]
-            ]);
+            return redirect()
+                ->route('projects.tasks.index', $project)
+                ->with('success', 'Project updated successfully');
         }
         catch (\Exception $e) {
             Log::error('Failed to update project', [
@@ -64,10 +59,9 @@ class ProjectController extends Controller
                 'error' => $e->getMessage()
             ]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Unable to update project. Please try again.'
-            ], 500);
+            return back()
+                ->withInput()
+                ->with('error', 'Unable to update project. Please try again.');
         }
     }
 

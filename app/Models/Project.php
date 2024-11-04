@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+
 
 class Project extends Model
 {
@@ -32,13 +34,15 @@ class Project extends Model
     }
 
     /**
-     * The "booted" method is a Laravel v8+ lifecycle hook that runs
-     * after the model and all its traits have booted (better than boot())
+     * Intercepts whenever the name attribute is set; automatically generate slug
      */
-    protected static function booted()
+    protected function name(): Attribute
     {
-        static::creating(function ($project) {
-            $project->slug = Str::slug($project->name);
-        });
+        return Attribute::make(
+            set: fn (string $value) => [
+                'name' => $value,
+                'slug' => Str::slug($value),
+            ],
+        );
     }
 }
