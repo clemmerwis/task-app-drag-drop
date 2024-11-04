@@ -1,3 +1,4 @@
+See setup-project.png for reference how structure should look when finished.
 # About
 This repository contains everything you need to get started to run a 
 Laravel application with Docker as fast as possible-- using Ngninx, MySQL, and PHP 8.2.
