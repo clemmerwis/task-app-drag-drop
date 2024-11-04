@@ -68,13 +68,6 @@ class TaskController extends Controller
                 'message' => 'Task updated successfully'
             ]);
         }
-        catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->validator->errors()->first(),
-                'errors' => $e->validator->errors()
-            ], 422);
-        }
         catch (\Exception $e) {
             Log::error('Failed to update task', [
                 'project_id' => $project->id,
@@ -149,12 +142,6 @@ class TaskController extends Controller
                 'success' => true,
                 'message' => 'Task priority updated successfully'
             ]);
-        }
-        catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->validator->errors()->first()
-            ], 422);
         }
         catch (\Exception $e) {
             Log::error('Failed to update task priority', [

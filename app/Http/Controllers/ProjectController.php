@@ -33,10 +33,6 @@ class ProjectController extends Controller
                 ->route('projects.tasks.index', $project)
                 ->with('success', 'Project created successfully!');
         }
-        catch (\Illuminate\Validation\ValidationException $e) {
-            // Don't use withInput() at all - the modal JS will handle repopulating
-            return back()->with('error', $e->validator->errors()->first());
-        }
         catch (\Exception $e) {
             Log::error('Failed to create project', [
                 'name' => $request->name,
@@ -60,13 +56,6 @@ class ProjectController extends Controller
                     'slug' => $project->slug
                 ]
             ]);
-        }
-        catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->validator->errors()->first(),
-                'errors' => $e->validator->errors()
-            ], 422);
         }
         catch (\Exception $e) {
             Log::error('Failed to update project', [
