@@ -15,13 +15,13 @@
                         <div class="mb-3">
                             <label for="projectName" class="form-label">Project Name</label>
                             <input type="text"
-                                class="form-control @error('name') is-invalid @enderror"
+                                class="form-control @error('project_name') is-invalid @enderror"
                                 id="projectName"
-                                name="name"
-                                value="{{ old('name') }}"
+                                name="project_name"
+                                value="{{ old('project_name') }}"
                                 required
                                 autofocus>
-                            @error('name')
+                            @error('project_name')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>

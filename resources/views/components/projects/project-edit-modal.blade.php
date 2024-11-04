@@ -20,16 +20,11 @@
                         <div class="mb-3">
                             <label for="editProjectName" class="form-label">Project Name</label>
                             <input type="text"
-                                   class="form-control @error('name') is-invalid @enderror"
+                                   class="form-control"
                                    id="editProjectName"
-                                   name="name"
-                                   value="{{ old('name', $project->name) }}"
+                                   name="edit_project_name"
+                                   value="{{ old('edit_project_name', $project->name) }}"
                                    required>
-                            @error('name')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                            @enderror
                         </div>
                     </div>
                     <div class="modal-footer">

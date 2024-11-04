@@ -23,10 +23,10 @@ class TaskController extends Controller
             return redirect()->route('projects.tasks.index', $request->switch_to);
         }
 
-        // get all projects for dropdown (including slug)
+        // Get all projects for dropdown (including slug)
         $projects = Project::select('id', 'name', 'slug')->get();
 
-        // get only the tasks for currently selected project
+        // Get only the tasks for currently selected project
         $tasks = $project->tasks()
             ->orderBy('priority')
             ->get();
@@ -38,73 +38,30 @@ class TaskController extends Controller
     {
         $validated = $request->validated();
 
-        try {
-            $project->tasks()->create($validated);
-            return redirect()
-                ->route('projects.tasks.index', $project)
-                ->with('success', 'Task created successfully!');
-
-        }
-        catch (\Exception $e) {
-            Log::error('Failed to create task', [
-                'project_id' => $project->id,
-                'name' => $validated['name'],
-                'error' => $e->getMessage()
-            ]);
-
-            return back()
-                ->withInput()
-                ->with('error', 'Unable to create task. Please try again.');
-        }
+        $project->tasks()->create($validated);
+        return redirect()
+            ->route('projects.tasks.index', $project)
+            ->with('success', 'Task created successfully!');
     }
 
     public function update(TaskUpdateRequest $request, Project $project, Task $task)
     {
-        try {
-            $task->update($request->validated());
+        $task->update($request->validated());
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Task updated successfully'
-            ]);
-        }
-        catch (\Exception $e) {
-            Log::error('Failed to update task', [
-                'project_id' => $project->id,
-                'task_id' => $task->id,
-                'name' => $request->validated()['name'],
-                'error' => $e->getMessage()
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Unable to update task. Please try again.'
-            ], 500);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Task updated successfully'
+        ]);
     }
 
     public function destroy(Project $project, Task $task)
     {
-        try {
-            $task->delete();
+        $task->delete();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Task deleted successfully'
-            ]);
-        }
-        catch (\Exception $e) {
-            Log::error('Failed to delete task', [
-                'project_id' => $project->id,
-                'task_id' => $task->id,
-                'error' => $e->getMessage()
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Unable to delete task. Please try again.'
-            ], 500);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Task deleted successfully'
+        ]);
     }
 
     /**

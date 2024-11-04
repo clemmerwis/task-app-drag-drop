@@ -28,6 +28,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         editProjectForm.addEventListener('submit', function() {
             if (submitButton) {
+                // Only submit if there's a value
+                const editInput = editProjectForm.querySelector('input[name="edit_project_name"]'); // Update name here
+                if (!editInput.value.trim()) {
+                    return;
+                }
+
                 // Disable the buttons
                 submitButton.disabled = true;
                 closeButtons.forEach(button => button.disabled = true);

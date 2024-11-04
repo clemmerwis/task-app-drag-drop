@@ -5,7 +5,7 @@ export function initializeProjectModals() {
 
     if (newProjectForm) {
         const createButton = newProjectForm.querySelector('button[type="submit"]');
-        const projectNameInput = newProjectForm.querySelector('input[name="name"]');
+        const projectNameInput = newProjectForm.querySelector('input[name="project_name"]');
         const closeButtons = newProjectModal.querySelectorAll('.btn-close, .btn-secondary');
         const modal = new bootstrap.Modal(newProjectModal);
 
@@ -32,15 +32,14 @@ export function initializeProjectModals() {
         newProjectForm.addEventListener('submit', (event) => {
             const name = projectNameInput.value.trim();
 
-            // Prevent submit and show errors if name is not empty
+            // Prevent submit and show errors if name is empty
             if (!name) {
                 event.preventDefault();
                 projectNameInput.classList.add('is-invalid');
                 return;
             }
 
-            // Set timeout to ensure the form submits before the loading state
-            setTimeout(() => setCreateLoading(true), 0);
+            setCreateLoading(true)
         });
 
         // Reset loading state if validation failed (page reloaded)

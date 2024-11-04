@@ -34,7 +34,7 @@ class Project extends Model
     }
 
     /**
-     * Intercepts whenever the name attribute is set; automatically generate slug
+     * Attribute mutator intercepts when name is set; automatically generates slug
      */
     protected function name(): Attribute
     {

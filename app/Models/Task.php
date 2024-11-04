@@ -52,7 +52,7 @@ class Task extends Model
             return;
         }
 
-        // Transaction wrapper-- ensures updates only execute if all are successful
+        // DB Transaction wrapper-- ensures updates only execute if all are successful
         DB::transaction(function() use ($newPriority) {
             if ($newPriority < $this->priority) {
                 self::query()
